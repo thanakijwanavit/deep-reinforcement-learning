@@ -9,7 +9,7 @@ import numpy as np
 
 
 # env = UnityEnvironment(file_name='/data/Reacher_One_Linux_NoVis/Reacher_One_Linux_NoVis.x86_64')
-env = UnityEnvironment(file_name='/data/Reacher_Linux_NoVis/Reacher.x86_64')
+env = UnityEnvironment(file_name='./Reacher_Linux_NoVis/Reacher.x86_64')
 # get the default brain
 brain_name = env.brain_names[0]
 brain = env.brains[brain_name]
@@ -41,12 +41,14 @@ def ddpg(n_episodes=1000, max_t=300, print_every=100):
         agent.reset()
         score = np.zeros(num_agents)
         for t in range(max_t):
+            if i_episode == 1 and t == 1: print('training started successfully')
             actions = agent.act(states,add_noise=True)
 #             print('next action is {}'.format(action))
             env_info = env.step(actions)[brain_name]
             next_states = env_info.vector_observations
             rewards = env_info.rewards
             dones = env_info.local_done
+            if i_episode == 1 and t == 1: print('variables are rewards: {} actions: {}'.format(rewards,actions))
 #             print(done)
 #             next_state, reward, done, _ = env.step(action)
             for state, action, reward, next_state, done in zip(states, actions, rewards, next_states, dones):
@@ -54,9 +56,10 @@ def ddpg(n_episodes=1000, max_t=300, print_every=100):
             states = next_states
 #             print('reward is {}'.format(rewards))
             scores += rewards
-#             if t % 100 == 0:
-#                 print('episode {} action {}'.format(i_episode, t))
+            if t % 10 == 0:
+                print('episode {} action {}'.format(i_episode, t))
             if np.any(done):
+                print('completed episode {} at t of {}'.format(i_episode,t))
 #                 print(done)
                 break
         scores_deque.append(np.mean(score))
