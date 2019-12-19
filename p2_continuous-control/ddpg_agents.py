@@ -23,6 +23,7 @@ UPDATE_EVERY = 20
 SIGMA = 0.05
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print('device is using {}'.format(device))
 
 class Agent():
     """Interacts with and learns from the environment."""

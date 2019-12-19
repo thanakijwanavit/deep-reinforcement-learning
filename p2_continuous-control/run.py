@@ -6,9 +6,11 @@ import torch
 import matplotlib.pyplot as plt
 from unityagents import UnityEnvironment
 import numpy as np
+import pandas as pd
+import datetime
 
 
-# env = UnityEnvironment(file_name='/data/Reacher_One_Linux_NoVis/Reacher_One_Linux_NoVis.x86_64')
+#env = UnityEnvironment(file_name='./Reacher_single/Reacher_Linux_NoVis/Reacher.x86_64')
 env = UnityEnvironment(file_name='./Reacher_Linux_NoVis/Reacher.x86_64')
 # get the default brain
 brain_name = env.brain_names[0]
@@ -32,7 +34,7 @@ print('The state for the first agent looks like:', states[0])
 print('state size is {} action size is {}'.format(state_size,action_size))
 
 agent = Agent(state_size=state_size, action_size=action_size, random_seed=2)
-def ddpg(n_episodes=1000, max_t=300, print_every=100):
+def ddpg(n_episodes=1000, max_t=300, print_every=1):
     scores_deque = deque(maxlen=print_every)
     scores = []
     for i_episode in range(1, n_episodes+1):
@@ -55,7 +57,7 @@ def ddpg(n_episodes=1000, max_t=300, print_every=100):
                 agent.step(state, action, reward, next_state, done , t)
             states = next_states
 #             print('reward is {}'.format(rewards))
-            scores += rewards
+            score += rewards
             if t % 10 == 0:
                 print('episode {} action {}'.format(i_episode, t))
             if np.any(done):
@@ -73,11 +75,15 @@ def ddpg(n_episodes=1000, max_t=300, print_every=100):
     return scores
 
 if __name__=='__main__':
-    scores = ddpg()
+    scores = ddpg(1000)
+    dt = datetime.datetime.now()
+    time_for_name = dt.strftime("%d_%H:%M")
+    df = pd.DataFrame({'scores': scores })
+    df.to_csv('results/training_result{}.csv'.format(time_for_name))
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.plot(np.arange(1, len(scores)+1), scores)
     plt.ylabel('Score')
     plt.xlabel('Episode #')
-    plt.show()
+    plt.savefig('results/training_plot{}.png'.format(time_for_name))
