@@ -10,8 +10,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 BUFFER_SIZE = int(1e6)  # replay buffer size
-BATCH_SIZE = 256        # minibatch size
-GAMMA = 0.9            # discount factor
+BATCH_SIZE = 128        # minibatch size
+GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
 LR_ACTOR = 1e-3         # learning rate of the actor 
 LR_CRITIC = 1e-3        # learning rate of the critic
@@ -21,6 +21,8 @@ WEIGHT_DECAY = 0        # L2 weight decay
 NUM_UPDATES = 5
 UPDATE_EVERY = 20
 SIGMA = 0.05
+EPS = 1
+EPS_DECAY = 1e-6
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print('device is using {}'.format(device))
@@ -40,6 +42,7 @@ class Agent():
         self.state_size = state_size
         self.action_size = action_size
         self.seed = random.seed(random_seed)
+        self.EPS = EPS
 
         # Actor Network (w/ Target Network)
         self.actor_local = Actor(state_size, action_size, random_seed).to(device)
@@ -79,7 +82,7 @@ class Agent():
             action = self.actor_local(state).cpu().data.numpy()
         self.actor_local.train()
         if add_noise:
-            action += self.noise.sample()
+            action += self.EPS * self.noise.sample()
         return np.clip(action, -1, 1)
 
     def reset(self):
@@ -125,6 +128,12 @@ class Agent():
         # ----------------------- update target networks ----------------------- #
         self.soft_update(self.critic_local, self.critic_target, TAU)
         self.soft_update(self.actor_local, self.actor_target, TAU)                     
+
+
+        ## update noise
+        if self.EPS > 0:
+            self.EPS -= EPS_DECAY
+        self.noise.reset()
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
