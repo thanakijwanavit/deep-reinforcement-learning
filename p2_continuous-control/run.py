@@ -75,7 +75,7 @@ def ddpg(n_episodes=1000, max_t=300, print_every=1):
     return scores
 
 if __name__=='__main__':
-    scores = ddpg(1000)
+    scores = ddpg(1000,1000)
     dt = datetime.datetime.now()
     time_for_name = dt.strftime("%d_%H:%M")
     df = pd.DataFrame({'scores': scores })

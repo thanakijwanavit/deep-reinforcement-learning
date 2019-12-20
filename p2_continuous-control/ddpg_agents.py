@@ -18,7 +18,7 @@ LR_CRITIC = 1e-3        # learning rate of the critic
 WEIGHT_DECAY = 0        # L2 weight decay
 
 
-NUM_UPDATES = 5
+NUM_UPDATES = 10
 UPDATE_EVERY = 20
 SIGMA = 0.05
 EPS = 1
