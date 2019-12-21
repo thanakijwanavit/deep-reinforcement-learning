@@ -75,16 +75,16 @@ def ddpg(n_episodes=1000, max_t=300, print_every=1, num_updates = 10):
     return scores
 
 if __name__=='__main__':
-    for i_update in [10,9,8,7,6,5,4,3,2,1]:
+    for i_update in [8,7,6]:
         scores = ddpg(300,1000,num_updates = i_update)
         dt = datetime.datetime.now()
         time_for_name = dt.strftime("%d_%H:%M")
         df = pd.DataFrame({'scores': scores })
-        df.to_csv('results/training_result{}.csv'.format(time_for_name))
+        df.to_csv('results/training_result{}update{}.csv'.format(time_for_name,i_update))
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         plt.plot(np.arange(1, len(scores)+1), scores)
         plt.ylabel('Score')
         plt.xlabel('Episode #')
-        plt.savefig('results/training_plot{}.png'.format(time_for_name))
+        plt.savefig('results/training_plot{}update{}.png'.format(time_for_name,i_update))
