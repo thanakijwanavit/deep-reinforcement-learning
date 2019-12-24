@@ -18,7 +18,7 @@ LR_CRITIC = 1e-3        # learning rate of the critic
 WEIGHT_DECAY = 0        # L2 weight decay
 
 
-NUM_UPDATES = 10
+NUM_UPDATES = 2
 UPDATE_EVERY = 20
 SIGMA = 0.05
 EPS = 1
@@ -30,7 +30,7 @@ print('device is using {}'.format(device))
 class Agent():
     """Interacts with and learns from the environment."""
     
-    def __init__(self, state_size, action_size, random_seed):
+    def __init__(self, state_size, action_size, random_seed, num_updates = 5):
         """Initialize an Agent object.
         
         Params
@@ -59,6 +59,9 @@ class Agent():
 
         # Replay memory
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
+
+        # set hyperparameters
+        self.num_updates = num_updates
     
     def step(self, state, action, reward, next_state, done, t):
         """Save experience in replay memory, and use random sample from buffer to learn."""
@@ -67,7 +70,7 @@ class Agent():
 
         # Learn, if enough samples are available in memory
         if len(self.memory) > BATCH_SIZE and t % UPDATE_EVERY == 0:
-            for i in range(NUM_UPDATES):
+            for i in range(self.num_updates):
                 experiences = self.memory.sample()
                 self.learn(experiences, GAMMA)
 
@@ -119,7 +122,7 @@ class Agent():
         # Minimize the loss
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
-        torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
+        #torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
         self.critic_optimizer.step()
 
         # ---------------------------- update actor ---------------------------- #
