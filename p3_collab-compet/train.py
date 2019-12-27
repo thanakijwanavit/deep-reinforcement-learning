@@ -6,7 +6,8 @@ import random
 import time
 import torch
 from unityagents import UnityEnvironment
-env = UnityEnvironment(file_name='./Tennis_Linux_NoVis/Tennis.x86_64')
+#env = UnityEnvironment(file_name='./Tennis_Linux_NoVis/Tennis.x86_64')
+env = UnityEnvironment(file_name='./Tennis.app')
 # get the default brain
 brain_name = env.brain_names[0]
 brain = env.brains[brain_name]
